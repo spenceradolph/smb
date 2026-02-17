@@ -35,6 +35,7 @@ class SMB(PayloadType):
             description="Username to use during authentication.",
             required=True
         ),
+        # TODO: add 'domain' as an optional build parameter for domain joined machines
         BuildParameter(
             name="password",
             parameter_type=BuildParameterType.String,

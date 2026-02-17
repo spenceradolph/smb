@@ -1,9 +1,8 @@
 from mythic_container.MythicCommandBase import *
 from mythic_container.MythicRPC import *
+from ..agent_code.smb_helpers import exit_smb
 
-from ..agent_code.smb_helpers import connect_to_smb
-
-class ReconnectArguments(TaskArguments):
+class ExitArguments(TaskArguments):
     def __init__(self, command_line, **kwargs):
         super().__init__(command_line, **kwargs)
         self.args = []
@@ -12,34 +11,20 @@ class ReconnectArguments(TaskArguments):
         pass
 
 
-class ReconnectCommand(CommandBase):
-    cmd = "reconnect"
+class ExitCommand(CommandBase):
+    cmd = "exit"
     needs_admin = False
-    help_cmd = "reconnect"
-    description = "Reconnect the SMB session"
+    help_cmd = "exit"
+    description = "Exit the SMB session"
     version = 1
     author = "Spencer Adolph"
-    argument_class = ReconnectArguments
+    argument_class = ExitArguments
+    is_exit = True
+    supported_ui_features = ["callback_table:exit"]
     attackmapping = []
 
     async def create_go_tasking(self, taskData: MythicCommandBase.PTTaskMessageAllData) -> MythicCommandBase.PTTaskCreateTaskingMessageResponse:
-        payload_uuid = taskData.Payload.UUID
-
-        # just in case its blank
-        domain = ""
-
-        for buildParam in taskData.BuildParameters:
-            if buildParam.Name == "host":
-                connect_ip = buildParam.Value
-            elif buildParam.Name == "domain":
-                domain = buildParam.Value
-            elif buildParam.Name == "username":
-                username = buildParam.Value
-            elif buildParam.Name == "password":
-                password = buildParam.Value
-            
-        
-        await connect_to_smb(payload_uuid, connect_ip, domain, username, password)
+        await exit_smb(taskData)
 
         await SendMythicRPCResponseCreate(MythicRPCResponseCreateMessage(
             TaskID=taskData.Task.ID,
