@@ -49,32 +49,32 @@ class Ls(CommandBase):
             output = ""
             errors = str(e)
         
-        # files = []
-        # for file in path.iterdir():
-        #     files.append(MythicRPCFileBrowserDataChildren(
-        #         Name=file.name,
-        #         IsFile=file.is_file(),
-        #         Permissions=oct(file.stat(follow_symlinks=False).st_mode)[-3:],
-        #         Size=file.stat(follow_symlinks=False).st_size,
-        #         ModifyTime=int(file.stat(follow_symlinks=False).st_mtime),
-        #     ))
+        files = []
+        for file in path.iterdir():
+            files.append(MythicRPCFileBrowserDataChildren(
+                Name=file.name,
+                IsFile=file.is_file(),
+                Permissions=oct(file.stat(follow_symlinks=False).st_mode)[-3:],
+                Size=file.stat(follow_symlinks=False).st_size,
+                ModifyTime=int(file.stat(follow_symlinks=False).st_mtime),
+            ))
 
-        # real_parent = f"/{'/'.join(str(path.parent).split('/')[3:])}"
+        real_parent = f"/{'/'.join(str(path.parent).split('/')[3:])}"
 
-        # searched_path = path.name
-        # if path.name == f"smb_{payload_uuid}.cifs":
-        #     searched_path = '/'
-        #     real_parent = ''
+        searched_path = path.name
+        if path.name == f"smb_{payload_uuid}.cifs":
+            searched_path = '/'
+            real_parent = ''
 
-        # await SendMythicRPCFileBrowserCreate(MythicRPCFileBrowserCreateMessage(
-        #     TaskID=taskData.Task.ID,
-        #     FileBrowser=MythicRPCFileBrowserData(
-        #         Name=searched_path,
-        #         ParentPath=real_parent,  
-        #         IsFile=False,
-        #         Files=files
-        #     )
-        # ))
+        await SendMythicRPCFileBrowserCreate(MythicRPCFileBrowserCreateMessage(
+            TaskID=taskData.Task.ID,
+            FileBrowser=MythicRPCFileBrowserData(
+                Name=searched_path,
+                ParentPath=real_parent,  
+                IsFile=False,
+                Files=files
+            )
+        ))
 
         await SendMythicRPCResponseCreate(MythicRPCResponseCreateMessage(
             TaskID=taskData.Task.ID,
